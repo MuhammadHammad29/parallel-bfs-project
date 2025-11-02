@@ -23,7 +23,14 @@
 // -----------------------------------------------------------------------------
 
 #pragma once
-#include <bits/stdc++.h>
+#include <vector>
+#include <string>
+#include <unordered_set>
+#include <algorithm>
+#include <random>
+#include <iostream>
+#include <cstdint>
+#include <fstream>
 using namespace std;
 
 // Simple adjacency-list graph
@@ -33,26 +40,33 @@ using Graph = vector<vector<int>>;
 // Note: This generator is intentionally simple for coursework (not scale-free).
 inline Graph make_synthetic_graph(int n, int avg_deg, uint64_t seed = 42) {
     Graph g(n);
+    if (avg_deg < 0) avg_deg = 0;
+    if (avg_deg > n - 1) avg_deg = n - 1;  // can't have more neighbors than (n-1)
+
     mt19937_64 rng(seed);
     uniform_int_distribution<int> dist(0, n - 1);
 
     for (int u = 0; u < n; ++u) {
-        // Use a set to avoid duplicate neighbors for node u
         unordered_set<int> seen;
         while ((int)seen.size() < avg_deg) {
             int v = dist(rng);
             if (v != u) seen.insert(v); // avoid self-loop
         }
-        // Insert undirected edges and keep neighbor lists sorted/unique
         for (int v : seen) {
             g[u].push_back(v);
             g[v].push_back(u);
         }
-        sort(g[u].begin(), g[u].end());
-        g[u].erase(unique(g[u].begin(), g[u].end()), g[u].end());
+    }
+
+    // Final global cleanup: guarantee sorted + unique neighbor lists for all nodes
+    for (int u = 0; u < n; ++u) {
+        auto& adj = g[u];
+        sort(adj.begin(), adj.end());
+        adj.erase(unique(adj.begin(), adj.end()), adj.end());
     }
     return g;
 }
+
 
 // Load an undirected graph from a simple edge list file with lines "u v".
 // Assumes 0-based vertex IDs and ignores invalid pairs/out-of-range lines.
