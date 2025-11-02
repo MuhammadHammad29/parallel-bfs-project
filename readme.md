@@ -1,4 +1,4 @@
-```
+```markdown
 ## 📘 Overview
 This repository implements both **Sequential** and **Parallel (OpenMP)** versions of the **Breadth-First Search (BFS)** algorithm.  
 The project demonstrates how a classic graph traversal algorithm can be parallelized to improve performance, while exploring core parallel programming challenges like synchronization, data dependency, and load balancing.
