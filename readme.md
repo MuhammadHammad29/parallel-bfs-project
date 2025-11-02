@@ -1,3 +1,4 @@
+```
 ## 📘 Overview
 This repository implements both **Sequential** and **Parallel (OpenMP)** versions of the **Breadth-First Search (BFS)** algorithm.  
 The project demonstrates how a classic graph traversal algorithm can be parallelized to improve performance, while exploring core parallel programming challenges like synchronization, data dependency, and load balancing.
@@ -13,6 +14,7 @@ The project demonstrates how a classic graph traversal algorithm can be parallel
 ---
 
 ## 🧩 Project Structure
+```
 
 project_bfs/
 ├─ graph_utils.h        # Shared graph generator and argument parser
@@ -21,40 +23,56 @@ project_bfs/
 ├─ results.txt          # Mid-term performance results
 └─ README.md            # Project overview and usage instructions
 
+````
+
+---
 
 ## ⚙️ Compilation Instructions
 
 ### 🔹 Windows (PowerShell)
 
-Compile:
+**Compile:**
 ```powershell
 # Sequential
 g++ -O3 -std=c++17 bfs_sequential.cpp -o bfs_seq.exe
 
 # Parallel (OpenMP)
 g++ -O3 -std=c++17 -fopenmp bfs_openmp.cpp -o bfs_par.exe
+````
 
-Run:
+**Run:**
 
+```powershell
 # Sequential BFS
 .\bfs_seq.exe --n 10000 --deg 8 --start 0
 
 # Parallel BFS (OpenMP) – set threads then run
 $Env:OMP_NUM_THREADS = 4
 .\bfs_par.exe --n 200000 --deg 8 --start 0
+```
 
-Example Output:
+**Example Output:**
 
+```
 Seq_time_s=0.026000
 Par_time_s=0.019000
 Speedup=1.368418
 Level_check=OK
 Visited_seq=200000 Visited_par=200000
+OMP_threads=4
+```
 
-Authors: Muhammad Hammad, Mustafa Haider, Noor Ul Haq, Faraz Ali, Nasir Khan 
-Course: Parallel & Distributed Computing 
-Institution: Szabist 
-Instructor: Dr. Syed Samar Yazdani 
-Semester: Fall 2025 
+---
+
+## 👨‍🏫 Authors
+
+**Muhammad Hammad**, **Mustafa Haider**, **Noor Ul Haq**, **Faraz Ali**, **Nasir Khan**
+**Course:** Parallel & Distributed Computing
+**Institution:** SZABIST
+**Instructor:** Dr. Syed Samar Yazdani
+**Semester:** Fall 2025
+
+``````
+
 
 
