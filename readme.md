@@ -15,7 +15,6 @@ The project demonstrates how a classic graph traversal algorithm can be parallel
 ---
 
 ## 🧩 Project Structure
-```
 PROJECT_BFS/
 ├─ bfs_openmp.cpp          # Parallel BFS (OpenMP, undirected + directed)
 ├─ bfs_sequential.cpp      # Sequential BFS baseline
@@ -26,10 +25,7 @@ PROJECT_BFS/
 ├─ graph.png               # Rendered graph image
 ├─ results.txt             # Final performance results (updated)
 └─ readme.md               # Project documentation (updated)
-````
----
----
-
+```
 ## ⚙️ Compilation Instructions
 
 ### 🔹 Windows (PowerShell)
