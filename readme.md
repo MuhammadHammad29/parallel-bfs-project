@@ -1,15 +1,15 @@
 ```markdown
 ## 📘 Overview
 This repository implements both **Sequential** and **Parallel (OpenMP)** versions of the **Breadth-First Search (BFS)** algorithm.  
-The project demonstrates how a classic graph traversal algorithm can be parallelized to improve performance, while exploring core parallel programming challenges like synchronization, data dependency, and load balancing.
+The project demonstrates how a classic graph traversal algorithm can be parallelized to improve performance, while exploring core parallel programming challenges like synchronization, data dependency,load balancing,and graph structure effects (directed vs undirected).
 
 ---
 
 ## 🎯 Objectives
 - Develop a **functional sequential BFS** as a correctness baseline.  
-- Implement a **partially working parallel BFS** using **OpenMP**.  
-- Record and analyze **execution times**, **speedup**, and **scaling** behavior.  
-- Identify performance bottlenecks and discuss improvements.
+- Implement a **parallel BFS** using **OpenMP** (level-synchronous frontier expansion). 
+- REvaluate **scalability** across graph sizes, thread counts, and graph types.  
+- Analyze performance bottlenecks in **synthetic**, **real-world**, and **directed** graphs.
 
 ---
 
@@ -21,6 +21,8 @@ project_bfs/
 ├─ bfs_sequential.cpp   # Sequential BFS baseline (timed)
 ├─ bfs_openmp.cpp       # Parallel BFS (OpenMP level-synchronous)
 ├─ results.txt          # Mid-term performance results
+└─ README.md            # Project overview and usage instructions
+└─ README.md            # Project overview and usage instructions
 └─ README.md            # Project overview and usage instructions
 
 ````
@@ -40,28 +42,49 @@ g++ -O3 -std=c++17 bfs_sequential.cpp -o bfs_seq.exe
 g++ -O3 -std=c++17 -fopenmp bfs_openmp.cpp -o bfs_par.exe
 ````
 
-**Run:**
+▶️ Usage Instructions
 
 ```powershell
 # Sequential BFS
 .\bfs_seq.exe --n 10000 --deg 8 --start 0
 
-# Parallel BFS (OpenMP) – set threads then run
-$Env:OMP_NUM_THREADS = 4
+# Parallel BFS (Undirected Synthetic Graph)(OpenMP) – set threads then run
+$Env:OMP_NUM_THREADS = 8
 .\bfs_par.exe --n 200000 --deg 8 --start 0
+
+# Parallel BFS (Directed Synthetic Graph)(OpenMP) – set threads then run
+$Env:OMP_NUM_THREADS = 8
+.\bfs_par.exe --n 200000 --deg 8 --start 0 --directed
+
+# Parallel BFS (Real Graph from File)(OpenMP) – set threads then run
+$Env:OMP_NUM_THREADS = 8
+.\bfs_par.exe --n 1157828 --start 1 --file com-youtube.ungraph.txt
+
+# Stable Benchmarking with Iterations
+# To reduce timing noise on fast runs, multiple BFS iterations can be executed using --iters:
+$Env:OMP_NUM_THREADS = 8
+.\bfs_par.exe --n 1200000 --deg 8 --start 0 --iters 20
 ```
 
 **Example Output:**
 
 ```
-Seq_time_s=0.026000
-Par_time_s=0.019000
-Speedup=1.368418
+Seq_time_s=<total sequential time>
+Par_time_s=<total parallel time>
+Iters=<number of BFS repetitions>
+Speedup=<Seq_time / Par_time>
 Level_check=OK
-Visited_seq=200000 Visited_par=200000
-OMP_threads=4
+Visited_seq=<nodes visited>
+Visited_par=<nodes visited>
 ```
+Level_check=OK confirms correctness by matching BFS level arrays between sequential and parallel executions.
 
+📈 Results Summary:
+Detailed performance results are documented in results.txt, covering:
+Small, medium, and large synthetic graphs
+Real social network graph (YouTube SNAP dataset)
+Directed synthetic graphs
+Speedup trends from 1 to 8 threads
 ---
 
 ## 👨‍🏫 Authors
