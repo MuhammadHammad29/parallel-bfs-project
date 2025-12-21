@@ -77,22 +77,21 @@ Visited_par=<nodes visited>
 Level_check=OK confirms correctness by matching BFS level arrays between sequential and parallel executions.
 
 📈 Results Summary:
+```
 Detailed performance results are documented in results.txt, covering:
 Small, medium, and large synthetic graphs
 Real social network graph (YouTube SNAP dataset)
 Directed synthetic graphs
 Speedup trends from 1 to 8 threads
----
+```
 
 ## 👨‍🏫 Authors
-
+```
 **Muhammad Hammad**, **Mustafa Haider**, **Noor Ul Haq**, **Faraz Ali**, **Nasir Khan**
 **Course:** Parallel & Distributed Computing
 **Institution:** SZABIST
 **Instructor:** Dr. Syed Samar Yazdani
 **Semester:** Fall 2025
-
-``````
-
+```
 
 
