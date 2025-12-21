@@ -12,6 +12,7 @@ The project demonstrates how a classic graph traversal algorithm can be parallel
 - Analyze performance bottlenecks in **synthetic**, **real-world**, and **directed** graphs.
 
 ---
+---
 
 ## 🧩 Project Structure
 ```
@@ -26,7 +27,7 @@ PROJECT_BFS/
 ├─ results.txt             # Final performance results (updated)
 └─ readme.md               # Project documentation (updated)
 ````
-
+---
 ---
 
 ## ⚙️ Compilation Instructions
