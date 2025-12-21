@@ -27,27 +27,27 @@ using namespace std;
 // (distance in edges from the start node; -1 means unreachable).
 static vector<int> bfs_seq(const Graph& g, int s, vector<int>* level_out = nullptr) {
     const int n = (int)g.size();
-    vector<char> vis(n, 0);
-    vector<int> q;      q.reserve(n);
-    vector<int> order;  order.reserve(n);
-    vector<int> level(n, -1);
+    vector<char> vis(n, 0); //nodes visited
+    vector<int> q;      q.reserve(n); //BFS queue
+    vector<int> order;  order.reserve(n); //order of visitation
+    vector<int> level(n, -1); //level of each node
 
-    vis[s] = 1; level[s] = 0; q.push_back(s);
+    vis[s] = 1; level[s] = 0; q.push_back(s); //initialize start node
 
     // Typical BFS loop using an index as queue head (faster than std::queue here).
     for (size_t h = 0; h < q.size(); ++h) {
-        int u = q[h];
-        order.push_back(u);
-        for (int v : g[u]) {
+        int u = q[h]; // current node
+        order.push_back(u); // record visitation order
+        for (int v : g[u]) { // explore neighbors
             if (!vis[v]) {
                 vis[v] = 1;
-                level[v] = level[u] + 1;
-                q.push_back(v);
+                level[v] = level[u] + 1; // set level for neighbor(parent level + 1)
+                q.push_back(v); // enqueue neighbor
             }
         }
     }
 
-    if (level_out) *level_out = std::move(level);
+    if (level_out) *level_out = std::move(level); 
     return order;
 }
 
@@ -69,14 +69,24 @@ int main(int argc, char** argv) {
         g = make_synthetic_graph(n, deg, seed);
     }
 
+    ofstream fout("edges.txt");
+    for (int u = 0; u < g.size(); u++) {
+    for (int v : g[u]) {
+        if (u < v)   // avoid duplicate edges in undirected graph
+            fout << u << " " << v << "\n";
+        }
+    }
+    fout.close();
+
+
     // Time only the BFS computation
     auto t0 = chrono::steady_clock::now();
-    vector<int> lvl_seq;
+    vector<int> lvl_seq; // store levels from BFS
     auto ord = bfs_seq(g, start, &lvl_seq);
     auto t1 = chrono::steady_clock::now();
 
-    // Emit metrics for your report
-    chrono::duration<double> dt = t1 - t0;
+    //metrics 
+    chrono::duration<double> dt = t1 - t0; 
     cout.setf(std::ios::fixed); cout << setprecision(6);
     cout << "Seq_time_s=" << dt.count() << "\n";
     cout << "Visited_count=" << ord.size() << "\n";

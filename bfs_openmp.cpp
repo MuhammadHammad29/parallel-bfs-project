@@ -59,29 +59,29 @@ static vector<int> bfs_seq(const Graph& g, int s, vector<int>* level_out = nullp
 // - After the parallel region, we merge all per-thread buffers to form next level.
 static vector<int> bfs_openmp_level(const Graph& g, int s, vector<int>* level_out = nullptr) {
     const int n = (int)g.size();
-    vector<atomic<uint8_t>> visited(n);
+    vector<atomic<uint8_t>> visited(n); // atomic visited flagged 0 or 1
     for (int i = 0; i < n; ++i) visited[i].store(0, memory_order_relaxed);
 
-    vector<int> level(n, -1);
-    vector<int> frontier; frontier.reserve(1024);
-    vector<int> order;    order.reserve(n);
+    vector<int> level(n, -1); // level of each node (-1 means unvisited)
+    vector<int> frontier; frontier.reserve(1024); // current level's frontier
+    vector<int> order;    order.reserve(n);   // order of visitation
 
     visited[s].store(1, memory_order_relaxed);
-    level[s] = 0;
+    level[s] = 0; 
     frontier.push_back(s);
     int curr_level = 0;
 
     while (!frontier.empty()) {
-        // Optional: record traversal order (useful for debugging / stats)
+        // record traversal order 
         order.insert(order.end(), frontier.begin(), frontier.end());
 
-        // Prepare per-thread buffers (avoid pushing into a shared vector)
+        // per-thread buffers to avoid pushing into a shared vector
         int P = 1;
         #ifdef _OPENMP
         P = omp_get_max_threads();
         #endif
-        vector<vector<int>> tls(P);
-        for (int t = 0; t < P; ++t) tls[t].reserve(frontier.size() / (P + 1) + 16);
+        vector<vector<int>> tls(P); // thread-local storage for next frontier
+        for (int t = 0; t < P; ++t) tls[t].reserve(frontier.size() / (P + 1) + 16); 
 
         // Parallel expansion of the current frontier
         #pragma omp parallel
@@ -92,15 +92,15 @@ static vector<int> bfs_openmp_level(const Graph& g, int s, vector<int>* level_ou
             #endif
             auto& out = tls[tid];
 
-            #pragma omp for schedule(dynamic, 512)
-            for (int i = 0; i < (int)frontier.size(); ++i) {
-                int u = frontier[i];
-                for (int v : g[u]) {
+            #pragma omp for schedule(dynamic, 512) // dynamic scheduling for load balance
+            for (int i = 0; i < (int)frontier.size(); ++i) { // for each node in frontier
+                int u = frontier[i]; // current node
+                for (int v : g[u]) { // explore neighbors
                     // Atomic test-and-set: only first discoverer enqueues v
-                    uint8_t was = visited[v].exchange(1, memory_order_relaxed);
+                    uint8_t was = visited[v].exchange(1, memory_order_relaxed); // returns previous value 
                     if (!was) {
                         level[v] = curr_level + 1; // all writers would assign same value
-                        out.push_back(v);
+                        out.push_back(v); // enqueue into thread-local buffer
                     }
                 }
             }
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Emit metrics your instructor expects
+    // metrics 
     cout.setf(std::ios::fixed); cout << setprecision(6);
     cout << "Seq_time_s=" << (t1 - t0) << "\n";
     cout << "Par_time_s=" << (t3 - t2) << "\n";

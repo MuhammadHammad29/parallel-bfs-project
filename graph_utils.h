@@ -37,7 +37,6 @@ using namespace std;
 using Graph = vector<vector<int>>;
 
 // Build an undirected random graph with ~avg_deg neighbors per vertex.
-// Note: This generator is intentionally simple for coursework (not scale-free).
 inline Graph make_synthetic_graph(int n, int avg_deg, uint64_t seed = 42) {
     Graph g(n);
     if (avg_deg < 0) avg_deg = 0;
@@ -94,7 +93,7 @@ inline void usage(const char* prog) {
 }
 
 // Minimal CLI parser shared by both binaries.
-// Validate arguments (keep it simple for coursework)
+// Validate arguments
 inline bool parse_args(int argc, char** argv, int& n, int& deg, int& start,
                        string& file, uint64_t& seed) {
     n = 10000; deg = 8; start = 0; file = ""; seed = 42;
