@@ -134,8 +134,9 @@ int main(int argc, char** argv) {
     cin.tie(nullptr);
 
     // Parse shared CLI options
-    int n, deg, start; string file; uint64_t seed;
-    if (!parse_args(argc, argv, n, deg, start, file, seed)) return 1;
+    int n, deg, start, iters; bool directed; string file; uint64_t seed;
+    if (!parse_args(argc, argv, n, deg, start, file, seed, iters,directed)) return 1;
+
 
     // Build or load graph once
     Graph g;
@@ -144,20 +145,26 @@ int main(int argc, char** argv) {
         if (!fin) { cerr << "Failed to open " << file << "\n"; return 1; }
         g = load_edgelist(fin, n);
     } else {
-        g = make_synthetic_graph(n, deg, seed);
+        g = make_synthetic_graph(n, deg, directed, seed);
     }
 
     // Baseline sequential run (also used for correctness checking)
     vector<int> lvl_seq, lvl_par;
 
     double t0 = wall();
-    auto seq_order = bfs_seq(g, start, &lvl_seq);
+    vector<int> seq_order;
+    for (int k = 0; k < iters; ++k) {
+        seq_order = bfs_seq(g, start, &lvl_seq);
+    }
     double t1 = wall();
 
-    // Parallel OpenMP BFS
     double t2 = wall();
-    auto par_order = bfs_openmp_level(g, start, &lvl_par);
+    vector<int> par_order;
+    for (int k = 0; k < iters; ++k) {
+        par_order = bfs_openmp_level(g, start, &lvl_par);
+    }
     double t3 = wall();
+
 
     // Verify levels match where nodes are reachable in both runs.
     bool ok = true;
@@ -171,6 +178,7 @@ int main(int argc, char** argv) {
     cout.setf(std::ios::fixed); cout << setprecision(6);
     cout << "Seq_time_s=" << (t1 - t0) << "\n";
     cout << "Par_time_s=" << (t3 - t2) << "\n";
+    cout << "Iters=" << iters << "\n";
     cout << "Speedup="   << ((t3 - t2) > 0 ? (t1 - t0) / (t3 - t2) : 1.0) << "\n";
     cout << "Level_check=" << (ok ? "OK" : "MISMATCH") << "\n";
     cout << "Visited_seq=" << seq_order.size()

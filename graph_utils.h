@@ -37,7 +37,7 @@ using namespace std;
 using Graph = vector<vector<int>>;
 
 // Build an undirected random graph with ~avg_deg neighbors per vertex.
-inline Graph make_synthetic_graph(int n, int avg_deg, uint64_t seed = 42) {
+inline Graph make_synthetic_graph(int n, int avg_deg, bool directed, uint64_t seed = 42) {
     Graph g(n);
     if (avg_deg < 0) avg_deg = 0;
     if (avg_deg > n - 1) avg_deg = n - 1;  // can't have more neighbors than (n-1)
@@ -53,7 +53,9 @@ inline Graph make_synthetic_graph(int n, int avg_deg, uint64_t seed = 42) {
         }
         for (int v : seen) {
             g[u].push_back(v);
-            g[v].push_back(u);
+            if (!directed) {
+                g[v].push_back(u);
+            }
         }
     }
 
@@ -95,8 +97,8 @@ inline void usage(const char* prog) {
 // Minimal CLI parser shared by both binaries.
 // Validate arguments
 inline bool parse_args(int argc, char** argv, int& n, int& deg, int& start,
-                       string& file, uint64_t& seed) {
-    n = 10000; deg = 8; start = 0; file = ""; seed = 42;
+                       string& file, uint64_t& seed, int& iters, bool& directed) {
+    n = 10000; deg = 8; start = 0; file = ""; seed = 42; iters = 1, directed = false;
 
     for (int i = 1; i < argc; ++i) {
         string a = argv[i];
@@ -106,11 +108,14 @@ inline bool parse_args(int argc, char** argv, int& n, int& deg, int& start,
         else if (a == "--start" && need(i)) start= atoi(argv[++i]);
         else if (a == "--file"  && need(i)) file = argv[++i];
         else if (a == "--seed"  && need(i)) seed = strtoull(argv[++i], nullptr, 10);
+        else if (a == "--iters" && need(i)) iters = atoi(argv[++i]);
+        else if (a == "--directed") directed = true;
         else { usage(argv[0]); return false; }
     }
 
     if (n <= 0)                 { cerr << "Invalid --n\n"; return false; }
     if (deg < 0)                { cerr << "Invalid --deg\n"; return false; }
     if (start < 0 || start >= n){ cerr << "Invalid --start\n"; return false; }
+    if (iters <= 0) { cerr << "Invalid --iters\n"; return false; }
     return true;
 }

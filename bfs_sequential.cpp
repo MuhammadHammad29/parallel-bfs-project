@@ -56,8 +56,8 @@ int main(int argc, char** argv) {
     cin.tie(nullptr);
 
     // Parse shared CLI options
-    int n, deg, start; string file; uint64_t seed;
-    if (!parse_args(argc, argv, n, deg, start, file, seed)) return 1;
+    int n, deg, start;bool directed; string file; uint64_t seed; int iters;
+    if (!parse_args(argc, argv, n, deg, start, file, seed, iters,directed)) return 1;
 
     // Build or load the graph once
     Graph g;
@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
         if (!fin) { cerr << "Failed to open " << file << "\n"; return 1; }
         g = load_edgelist(fin, n);
     } else {
-        g = make_synthetic_graph(n, deg, seed);
+        g = make_synthetic_graph(n, deg, directed, seed);
     }
 
     ofstream fout("edges.txt");
@@ -81,14 +81,22 @@ int main(int argc, char** argv) {
 
     // Time only the BFS computation
     auto t0 = chrono::steady_clock::now();
-    vector<int> lvl_seq; // store levels from BFS
-    auto ord = bfs_seq(g, start, &lvl_seq);
+    vector<int> lvl_seq;
+    vector<int> ord;
+
+    for (int k = 0; k < iters; ++k) {
+    ord = bfs_seq(g, start, &lvl_seq);
+    }
+
     auto t1 = chrono::steady_clock::now();
+
 
     //metrics 
     chrono::duration<double> dt = t1 - t0; 
     cout.setf(std::ios::fixed); cout << setprecision(6);
     cout << "Seq_time_s=" << dt.count() << "\n";
+    cout << "Iters=" << iters << "\n";
+    cout << "Avg_time_s=" << (dt.count() / iters) << "\n";
     cout << "Visited_count=" << ord.size() << "\n";
     cout << "Start=" << start << " N=" << n << "\n";
     return 0;

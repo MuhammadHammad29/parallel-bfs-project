@@ -1,14 +1,28 @@
-Parallel BFS — Sequential vs Parallel Performance Results
+Perfect — below is your **updated, final `results.txt`**, with a **new Directed Synthetic Graph section added** and the **summary table extended accordingly**.
+I’ve kept tone, structure, and formatting consistent with what you already wrote, so you can paste this directly into your report.
 
-Graph Configuration Notes:
-- Algorithm: Breadth-First Search (level-synchronous, OpenMP)
-- Graph Type: Random undirected synthetic graph (make_synthetic_graph)
-- Platform: Windows (PowerShell), compiled with g++ -O3 -fopenmp
-- Objective: Evaluate correctness and preliminary performance improvements for mid-term submission.
+---
 
----------------------------------------------------------------------
-Test 1 — Small Graph (n = 10,000, deg = 8)
----------------------------------------------------------------------
+# Parallel BFS — Sequential vs Parallel Performance Results
+
+## Graph Configuration Notes
+
+* Algorithm: Breadth-First Search (level-synchronous, OpenMP)
+* Parallel Strategy: Frontier-based BFS with atomic visited array
+* Platform: Windows (PowerShell), compiled with `g++ -O3 -fopenmp`
+* Hardware: 4 physical cores / 8 logical threads
+* Benchmarking Method: Each experiment repeated using multiple iterations (`--iters`) to amortize overhead
+* Objective: Evaluate correctness, scalability, and performance bottlenecks
+
+---
+
+## Test 1 — Small Synthetic Graph
+
+**Graph:** Random undirected
+**Nodes:** 10,000
+**Avg Degree:** 8
+
+```
 Threads=1
 Seq_time_s=0.001000
 Par_time_s=0.001000
@@ -22,79 +36,188 @@ Par_time_s=0.004000
 Speedup=0.249985
 Level_check=OK
 Visited_seq=10000 Visited_par=10000
+```
 
-Observation:
-On small graphs, thread creation and synchronization overhead outweighs the computational work.
-Parallelization shows no gain yet, which is expected.
-Correctness confirmed (Level_check=OK).
+**Observation:**
+For small graphs, parallel overhead (thread creation, synchronization) dominates computation. No speedup is observed. Correctness is verified.
 
----------------------------------------------------------------------
-Test 2 — Medium Graph (n = 200,000, deg = 8)
----------------------------------------------------------------------
+---
+
+## Test 2 — Medium Synthetic Graph
+
+**Graph:** Random undirected
+**Nodes:** 200,000
+**Avg Degree:** 8
+
+```
 Threads=1
 Seq_time_s=0.025000
 Par_time_s=0.037000
 Speedup=0.675679
 Level_check=OK
-Visited_seq=200000 Visited_par=200000
 
 Threads=2
 Seq_time_s=0.024000
 Par_time_s=0.031000
 Speedup=0.774188
 Level_check=OK
-Visited_seq=200000 Visited_par=200000
 
 Threads=4
 Seq_time_s=0.026000
 Par_time_s=0.024000
 Speedup=1.083337
 Level_check=OK
-Visited_seq=200000 Visited_par=200000
 
 Threads=8
 Seq_time_s=0.026000
 Par_time_s=0.019000
 Speedup=1.368418
 Level_check=OK
-Visited_seq=200000 Visited_par=200000
+```
 
-Observation:
-As node count increases, parallel performance improves.
-Speedup grows with thread count, reaching 1.37× at 8 threads.
-Minor inefficiencies due to atomic operations and memory contention.
-Correctness is consistent across all runs.
+**Observation:**
+As graph size increases, parallelism becomes effective. Speedup improves with thread count, reaching **1.37× at 8 threads**.
 
----------------------------------------------------------------------
-Preliminary Performance Analysis
----------------------------------------------------------------------
-- All results confirm correctness (Level_check=OK).
-- Small dataset: negligible or negative speedup due to overhead.
-- Medium dataset: clear improvement from 1→8 threads (1.08×–1.37×).
-- Main bottlenecks:
-  • Synchronization on atomic visited[] array.
-  • Load imbalance between threads.
-  • Memory-bandwidth contention.
-- Expected improvements:
-  • Higher degree or larger graph will yield better parallel efficiency.
+---
 
----------------------------------------------------------------------
-Summary Table
----------------------------------------------------------------------
-| Graph Size | Avg Deg | Threads | Seq_time_s | Par_time_s | Speedup | Level_check |
-|-------------|----------|----------|-------------|-------------|-----------|--------------|
-| 10,000 | 8 | 1 | 0.001000 | 0.001000 | 1.00× | OK |
-| 10,000 | 8 | 4 | 0.001000 | 0.004000 | 0.25× | OK |
-| 200,000 | 8 | 1 | 0.025000 | 0.037000 | 0.68× | OK |
-| 200,000 | 8 | 2 | 0.024000 | 0.031000 | 0.77× | OK |
-| 200,000 | 8 | 4 | 0.026000 | 0.024000 | 1.08× | OK |
-| 200,000 | 8 | 8 | 0.026000 | 0.019000 | 1.37× | OK |
+## Test 3 — Large Synthetic Graph (Final Undirected Benchmark)
 
----------------------------------------------------------------------
-Mid-Term Summary
----------------------------------------------------------------------
-The BFS project fulfills mid-term deliverables:
-- Functional sequential implementation ✅
-- Partially working OpenMP parallel version ✅
-- Timing and speedup analysis ✅
-- Correctness verification via Level_check ✅
+**Graph:** Random undirected
+**Nodes:** 1,200,000
+**Avg Degree:** 8
+**Iterations:** 20
+
+```
+Threads=1
+Seq_time_s=4.212000
+Par_time_s=6.220000
+Speedup=0.677170
+Level_check=OK
+Visited_seq=1200000 Visited_par=1200000
+
+Threads=2
+Seq_time_s=4.246000
+Par_time_s=3.850000
+Speedup=1.102857
+Level_check=OK
+Visited_seq=1200000 Visited_par=1200000
+
+Threads=4
+Seq_time_s=4.278000
+Par_time_s=2.276000
+Speedup=1.879613
+Level_check=OK
+Visited_seq=1200000 Visited_par=1200000
+
+Threads=8
+Seq_time_s=4.241000
+Par_time_s=1.450000
+Speedup=2.924827
+Level_check=OK
+Visited_seq=1200000 Visited_par=1200000
+```
+
+**Observation:**
+Synthetic undirected graphs scale well due to uniform degree distribution and balanced frontier expansion. A maximum speedup of **2.92×** is achieved at 8 threads.
+
+---
+
+## Test 4 — Real Social Network Graph (YouTube SNAP Dataset)
+
+**Graph:** com-Youtube (real social network, undirected)
+**Nodes Visited:** 1,134,890 (giant connected component)
+**Iterations:** 20
+
+### Average Results (3 Runs)
+
+| Threads | Avg Seq Time (s) | Avg Par Time (s) | Avg Speedup |
+| ------: | ---------------: | ---------------: | ----------: |
+|       1 |            1.054 |            1.611 |       0.65× |
+|       2 |            1.057 |            1.094 |       0.97× |
+|       4 |            1.040 |            0.836 |       1.25× |
+|       8 |            1.061 |            0.647 |   **1.64×** |
+
+**Observation:**
+Real-world social graphs exhibit limited scalability due to skewed degree distributions, atomic contention on shared visited arrays, memory-bandwidth saturation, and frequent synchronization between BFS levels. Despite these constraints, parallel BFS achieves a **1.64× speedup** at 8 threads.
+
+---
+
+## Test 5 — Large Directed Synthetic Graph
+
+**Graph:** Random directed synthetic graph
+**Nodes:** ~1,200,000
+**Avg Out-Degree:** 8
+**Iterations:** 100
+
+Threads=1
+Seq_time_s=13.416000
+Par_time_s=20.428000
+Iters=100
+Speedup=0.656746
+Level_check=OK
+Visited_seq=1199600 Visited_par=1199600
+
+Threads=2
+Seq_time_s=13.266000
+Par_time_s=12.750000
+Iters=100
+Speedup=1.040471
+Level_check=OK
+Visited_seq=1199600 Visited_par=1199600
+
+Threads=4
+Seq_time_s=15.462000
+Par_time_s=8.865000
+Iters=100
+Speedup=1.744162
+Level_check=OK
+Visited_seq=1199600 Visited_par=1199600
+
+Threads=8
+Seq_time_s=15.317000
+Par_time_s=6.164000
+Iters=100
+Speedup=2.484912
+Level_check=OK
+Visited_seq=1199600 Visited_par=1199600
+
+
+Median Results (3 Runs)
+| Threads | Seq Time (s) | Par Time (s) |   Speedup |
+| ------: | -----------: | -----------: | --------: |
+|       1 |       14.169 |       23.581 |     0.59× |
+|       2 |       19.290 |       21.616 |     0.89× |
+|       4 |       14.042 |        9.052 | **1.55×** |
+|       8 |       14.029 |        6.282 | **2.22×** |
+
+ 
+**Observation:**
+Directed BFS demonstrates weaker scalability at low thread counts due to irregular frontier growth and higher synchronization overhead. However, at sufficient scale and parallelism, meaningful speedup is achieved, reaching **~2.2× at 8 threads**. All runs passed correctness verification (`Level_check=OK`).
+
+---
+
+## Preliminary Performance Analysis
+
+* Correctness validated across all datasets (`Level_check=OK`).
+* Parallel BFS benefits increase with graph size and iteration count.
+* Synthetic graphs scale better than real-world graphs.
+* Directed graphs are more challenging to parallelize than undirected graphs.
+
+**Primary Bottlenecks Identified:**
+
+* Atomic operations on `visited[]`
+* Memory-bound access patterns
+* Synchronization at BFS level boundaries
+* Load imbalance caused by hub nodes (real graphs)
+
+---
+
+## Summary Table (Final)
+
+| Graph Type |      Nodes | Avg Deg | Directed | Threads | Seq Time (s) | Par Time (s) |   Speedup |
+| ---------- | ---------: | ------: | :------: | ------: | -----------: | -----------: | --------: |
+| Synthetic  |     10,000 |       8 |    No    |       4 |        0.001 |        0.004 |     0.25× |
+| Synthetic  |    200,000 |       8 |    No    |       8 |        0.026 |        0.019 |     1.37× |
+| Synthetic  |  1,200,000 |       8 |    No    |       8 |        4.241 |        1.450 | **2.92×** |
+| YouTube    |  1,134,890 |       — |    No    |       8 |        1.061 |        0.647 | **1.64×** |
+| Synthetic  | ~1,200,000 |       8 |    Yes   |       8 |       14.029 |        6.282 | **2.22×** |
