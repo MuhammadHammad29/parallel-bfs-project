@@ -15,16 +15,16 @@ The project demonstrates how a classic graph traversal algorithm can be parallel
 
 ## 🧩 Project Structure
 ```
-
-project_bfs/
-├─ graph_utils.h        # Shared graph generator and argument parser
-├─ bfs_sequential.cpp   # Sequential BFS baseline (timed)
-├─ bfs_openmp.cpp       # Parallel BFS (OpenMP level-synchronous)
-├─ results.txt          # Mid-term performance results
-└─ README.md            # Project overview and usage instructions
-└─ README.md            # Project overview and usage instructions
-└─ README.md            # Project overview and usage instructions
-
+PROJECT_BFS/
+├─ bfs_openmp.cpp          # Parallel BFS (OpenMP, undirected + directed)
+├─ bfs_sequential.cpp      # Sequential BFS baseline
+├─ graph_utils.h           # Graph generation, file loading, CLI parsing
+├─ com-youtube.ungraph.txt # Real YouTube SNAP dataset (undirected)
+├─ edges.txt               # Generated edge list (from synthetic graph)
+├─ graph.dot               # GraphViz DOT file (visualization)
+├─ graph.png               # Rendered graph image
+├─ results.txt             # Final performance results (updated)
+└─ readme.md               # Project documentation (updated)
 ````
 
 ---
