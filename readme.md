@@ -1,17 +1,16 @@
 ```markdown
 ## 📘 Overview
 This repository implements both **Sequential** and **Parallel (OpenMP)** versions of the **Breadth-First Search (BFS)** algorithm.  
-The project demonstrates how a classic graph traversal algorithm can be parallelized to improve performance, while exploring core parallel programming challenges like synchronization, data dependency,load balancing,and graph structure effects (directed vs undirected).
+The project demonstrates how a classic graph traversal algorithm can be parallelized to improve performance, while exploring core parallel programming challenges like synchronization, data dependency, load balancing, and graph structure effects (directed vs undirected).
 
 ---
 
 ## 🎯 Objectives
 - Develop a **functional sequential BFS** as a correctness baseline.  
 - Implement a **parallel BFS** using **OpenMP** (level-synchronous frontier expansion). 
-- REvaluate **scalability** across graph sizes, thread counts, and graph types.  
+- Evaluate **scalability** across graph sizes, thread counts, and graph types.  
 - Analyze performance bottlenecks in **synthetic**, **real-world**, and **directed** graphs.
 
----
 ---
 
 ## 🧩 Project Structure
@@ -91,7 +90,7 @@ Muhammad Hammad, Mustafa Haider, Noor Ul Haq, Faraz Ali, Nasir Khan
 Course: Parallel & Distributed Computing
 Institution: SZABIST
 Instructor: Dr. Syed Samar Yazdani
-Semester: Fall 2025
+Semester: Fall 2024
 ```
 
 

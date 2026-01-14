@@ -1,15 +1,3 @@
-// bfs_openmp.cpp
-// -----------------------------------------------------------------------------
-// Partially working parallel BFS using OpenMP (level-synchronous).
-// - Each BFS "frontier" (the current level's nodes) is expanded in parallel.
-// - To avoid contention, each thread collects discovered nodes in a local
-//   buffer; we merge all buffers at the end of the level.
-// - Race-free 'visited' using atomic test-and-set (exchange from 0->1).
-// - Prints sequential time, parallel time, speedup, and a level-equality check.
-// This meets the mid-term requirement: a parallel version that correctly
-// handles small/medium data and shows preliminary performance results.
-// -----------------------------------------------------------------------------
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -59,7 +47,7 @@ static vector<int> bfs_seq(const Graph& g, int s, vector<int>* level_out = nullp
 // - After the parallel region, we merge all per-thread buffers to form next level.
 static vector<int> bfs_openmp_level(const Graph& g, int s, vector<int>* level_out = nullptr) {
     const int n = (int)g.size();
-    vector<atomic<uint8_t>> visited(n); // atomic visited flagged 0 or 1
+    vector<atomic<uint8_t>> visited(n); // atomic visited flags 0 or 1
     for (int i = 0; i < n; ++i) visited[i].store(0, memory_order_relaxed);
 
     vector<int> level(n, -1); // level of each node (-1 means unvisited)
@@ -81,7 +69,7 @@ static vector<int> bfs_openmp_level(const Graph& g, int s, vector<int>* level_ou
         P = omp_get_max_threads();
         #endif
         vector<vector<int>> tls(P); // thread-local storage for next frontier
-        for (int t = 0; t < P; ++t) tls[t].reserve(frontier.size() / (P + 1) + 16); 
+        for (int t = 0; t < P; ++t) tls[t].reserve(frontier.size() / (P + 1) + 16); // heuristic estimate per thread 
 
         // Parallel expansion of the current frontier
         #pragma omp parallel

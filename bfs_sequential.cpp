@@ -27,12 +27,12 @@ using namespace std;
 // (distance in edges from the start node; -1 means unreachable).
 static vector<int> bfs_seq(const Graph& g, int s, vector<int>* level_out = nullptr) {
     const int n = (int)g.size();
-    vector<char> vis(n, 0); //nodes visited
-    vector<int> q;      q.reserve(n); //BFS queue
-    vector<int> order;  order.reserve(n); //order of visitation
-    vector<int> level(n, -1); //level of each node
+    vector<char> vis(n, 0); // visited flags for each node
+    vector<int> q;      q.reserve(n); // BFS queue
+    vector<int> order;  order.reserve(n); // order of visitation
+    vector<int> level(n, -1); // level of each node
 
-    vis[s] = 1; level[s] = 0; q.push_back(s); //initialize start node
+    vis[s] = 1; level[s] = 0; q.push_back(s); // initialize start node
 
     // Typical BFS loop using an index as queue head (faster than std::queue here).
     for (size_t h = 0; h < q.size(); ++h) {
@@ -41,7 +41,7 @@ static vector<int> bfs_seq(const Graph& g, int s, vector<int>* level_out = nullp
         for (int v : g[u]) { // explore neighbors
             if (!vis[v]) {
                 vis[v] = 1;
-                level[v] = level[u] + 1; // set level for neighbor(parent level + 1)
+                level[v] = level[u] + 1; // set level for neighbor (parent level + 1)
                 q.push_back(v); // enqueue neighbor
             }
         }

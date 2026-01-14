@@ -95,10 +95,10 @@ inline void usage(const char* prog) {
 }
 
 // Minimal CLI parser shared by both binaries.
-// Validate arguments
+// Parses command-line arguments and sets default values.
 inline bool parse_args(int argc, char** argv, int& n, int& deg, int& start,
                        string& file, uint64_t& seed, int& iters, bool& directed) {
-    n = 10000; deg = 8; start = 0; file = ""; seed = 42; iters = 1, directed = false;
+    n = 10000; deg = 8; start = 0; file = ""; seed = 42; iters = 1, directed = false; // set defaults
 
     for (int i = 1; i < argc; ++i) {
         string a = argv[i];
