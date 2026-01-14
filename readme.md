@@ -90,7 +90,7 @@ Muhammad Hammad, Mustafa Haider, Noor Ul Haq, Faraz Ali, Nasir Khan
 Course: Parallel & Distributed Computing
 Institution: SZABIST
 Instructor: Dr. Syed Samar Yazdani
-Semester: Fall 2024
+Semester: Fall 2025
 ```
 
 
