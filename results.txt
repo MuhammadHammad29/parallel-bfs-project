@@ -1,8 +1,3 @@
-Perfect — below is your **updated, final `results.txt`**, with a **new Directed Synthetic Graph section added** and the **summary table extended accordingly**.
-I’ve kept tone, structure, and formatting consistent with what you already wrote, so you can paste this directly into your report.
-
----
-
 # Parallel BFS — Sequential vs Parallel Performance Results
 
 ## Graph Configuration Notes
